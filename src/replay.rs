@@ -595,14 +595,18 @@ impl Worker {
                             session.close();
                             warn!("server hangup");
                         }
+                        // decode and check request miss/hit
                         Ok(_) => match decode(session) {
                             Ok(_) => {
                                 RESPONSE.increment();
-                                if let Some(ref heatmap) = self.request_heatmap {
-                                    let now = Instant::now();
-                                    let elapsed = now - session.timestamp();
-                                    let us = (elapsed.as_secs_f64() * 1_000_000.0) as u64;
-                                    heatmap.increment(now, us, 1);
+                                if let Some(ref _heatmap) = self.request_heatmap {
+                                    let now = std::time::Instant::now();
+                                    // let now = Instant::now();
+                                    // let elapsed = now - session.timestamp();
+                                    // let us = (elapsed.as_nanos()) as u64;
+                                    // print latency
+                                    println!("{}", now.elapsed().as_nanos());
+                                    // heatmap.increment(now, us, 1);
                                 }
                                 if let Some(request) = self.work.pop() {
                                     self.send_request(token, request);
