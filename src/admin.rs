@@ -189,6 +189,7 @@ impl Admin {
 
             let window = WINDOW.value();
 
+            /*
             info!("-----");
             info!("Window: {}", window);
             info!(
@@ -220,12 +221,14 @@ impl Admin {
                 "Success: Request: {:.2} % Response: {:.2} % Connect: {:.2} %",
                 request_success, response_success, connect_success
             );
+            */
 
             let hit_rate =
                 snapshot.hitrate(&self.snapshot, REQUEST_GET.name(), RESPONSE_HIT.name());
 
-            info!("Hit-rate: {:.2} %", hit_rate);
+            println!("Hit-rate: {:.4} %", hit_rate);
 
+            /*
             if let Some(ref heatmap) = self.connect_heatmap {
                 let p25 = heatmap.percentile(25.0).unwrap_or(0);
                 let p50 = heatmap.percentile(50.0).unwrap_or(0);
@@ -251,6 +254,7 @@ impl Admin {
                     p25, p50, p75, p90, p99, p999, p9999
                 );
             }
+            */
 
             WINDOW.increment();
             self.snapshot = snapshot.clone();

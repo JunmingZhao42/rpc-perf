@@ -596,17 +596,19 @@ impl Worker {
                             warn!("server hangup");
                         }
                         // decode and check request miss/hit
-                        Ok(_) => match decode(session) {
-                            Ok(_) => {
+                        Ok(_) => match decode_with_hit(session) {
+                            Ok(hit) => {
                                 RESPONSE.increment();
                                 if let Some(ref _heatmap) = self.request_heatmap {
-                                    let now = std::time::Instant::now();
-                                    // let now = Instant::now();
-                                    // let elapsed = now - session.timestamp();
-                                    // let us = (elapsed.as_nanos()) as u64;
+                                    let now = Instant::now();
+                                    let elapsed = now - session.timestamp();
+                                    let us = (elapsed.as_nanos()) as u64;
                                     // print latency
-                                    println!("{}", now.elapsed().as_nanos());
-                                    // heatmap.increment(now, us, 1);
+                                    match hit {
+                                        1 => println!("h {}", us),
+                                        2 => println!("m {}", us),
+                                        _ => (),
+                                    };
                                 }
                                 if let Some(request) = self.work.pop() {
                                     self.send_request(token, request);
@@ -690,6 +692,47 @@ fn decode(buffer: &mut Session) -> Result<(), ParseError> {
         }
         let _ = buffer.consume(response_end + 5);
         return Ok(());
+    }
+
+    Err(ParseError::Incomplete)
+}
+
+
+// this is a very barebones memcache parser
+fn decode_with_hit(buffer: &mut Session) -> Result<u8, ParseError> {
+    // no-copy borrow as a slice
+    let buf: &[u8] = (*buffer).buffer();
+
+    debug!("buffer content: {:?}", buf);
+
+    for response in &[
+        "STORED\r\n",
+        "NOT_STORED\r\n",
+        "EXISTS\r\n",
+        "NOT_FOUND\r\n",
+        "DELETED\r\n",
+        "TOUCHED\r\n",
+    ] {
+        let bytes = response.as_bytes();
+        if buf.len() >= bytes.len() && &buf[0..bytes.len()] == bytes {
+            let _ = buffer.consume(bytes.len());
+            return Ok(0);
+        }
+    }
+
+    let mut windows = buf.windows(5);
+    if let Some(response_end) = windows.position(|w| w == b"END\r\n") {
+        let hit: u8;
+        if response_end > 0 {
+            // hit
+            hit = 1;
+            RESPONSE_HIT.increment();
+        } else {
+            hit = 2;
+            // miss
+        }
+        let _ = buffer.consume(response_end + 5);
+        return Ok(hit);
     }
 
     Err(ParseError::Incomplete)

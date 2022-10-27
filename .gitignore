@@ -2,3 +2,6 @@ target
 vendor
 .cargo
 **/*.rs.bk
+*.log
+*.sh
+*.ipynb
