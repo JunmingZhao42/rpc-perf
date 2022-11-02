@@ -600,13 +600,11 @@ impl Worker {
                             Ok(hit) => {
                                 RESPONSE.increment();
                                 if let Some(ref _heatmap) = self.request_heatmap {
-                                    let now = Instant::now();
-                                    let elapsed = now - session.timestamp();
-                                    let us = (elapsed.as_nanos()) as u64;
+                                    let milli = (session.timestamp().elapsed().as_millis()) as u64;
                                     // print latency
                                     match hit {
-                                        1 => println!("h {}", us),
-                                        2 => println!("m {}", us),
+                                        1 => println!("h {}", milli),
+                                        2 => println!("m {}", milli),
                                         _ => (),
                                     };
                                 }
@@ -664,7 +662,7 @@ pub enum ParseError {
 }
 
 // this is a very barebones memcache parser
-fn decode(buffer: &mut Session) -> Result<(), ParseError> {
+fn _decode(buffer: &mut Session) -> Result<(), ParseError> {
     // no-copy borrow as a slice
     let buf: &[u8] = (*buffer).buffer();
 

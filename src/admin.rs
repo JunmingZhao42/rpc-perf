@@ -226,6 +226,9 @@ impl Admin {
             let hit_rate =
                 snapshot.hitrate(&self.snapshot, REQUEST_GET.name(), RESPONSE_HIT.name());
 
+            if hit_rate == 0 as f64 {
+                std::process::exit(1);
+            }
             println!("Hit-rate: {:.4} %", hit_rate);
 
             /*
@@ -382,7 +385,7 @@ impl Snapshot {
         delta / time
     }
 
-    fn success_rate(&self, other: &Self, total: &'static str, error: &'static str) -> f64 {
+    fn _success_rate(&self, other: &Self, total: &'static str, error: &'static str) -> f64 {
         let total = self.rate(other, total);
         let error = self.rate(other, error);
         if total > 0.0 {
