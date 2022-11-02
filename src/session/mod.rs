@@ -41,8 +41,6 @@ pub struct Session {
     timestamp: Instant,
     /// the number of outstanding responses
     outstanding: usize,
-    /// use std::time to calculate response latency
-    my_timestamp: std::time::Instant,
 }
 
 impl std::fmt::Debug for Session {
@@ -98,7 +96,6 @@ impl Session {
             interest: Interest::WRITABLE,
             timestamp: Instant::now(),
             outstanding: 0,
-            my_timestamp: std::time::Instant::now(),
         }
     }
 
@@ -224,14 +221,6 @@ impl Session {
 
     pub fn set_timestamp(&mut self, timestamp: Instant) {
         self.timestamp = timestamp;
-    }
-
-    pub fn my_timestamp(&self) -> std::time::Instant {
-        self.my_timestamp
-    }
-
-    pub fn set_my_timestamp(&mut self, timestamp: std::time::Instant) {
-        self.my_timestamp = timestamp;
     }
 
     pub fn ssl_session(&self) -> Option<SslSession> {

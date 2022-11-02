@@ -5,3 +5,4 @@ vendor
 *.log
 *.sh
 *.ipynb
+out

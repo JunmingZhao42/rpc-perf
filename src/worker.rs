@@ -181,7 +181,6 @@ impl Worker {
         let token = Token(entry.key());
         session.set_token(token);
         session.set_timestamp(Instant::now());
-        session.set_my_timestamp(std::time::Instant::now());
         entry.insert(session);
         Ok(token)
     }
@@ -252,7 +251,6 @@ impl Worker {
         }
         session.set_outstanding(count);
         session.set_timestamp(Instant::now());
-        session.set_my_timestamp(std::time::Instant::now());
         let _ = session.flush();
         if session.write_pending() > 0 {
             self.reregister(token)

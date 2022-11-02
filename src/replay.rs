@@ -478,6 +478,7 @@ impl Worker {
             let token = Token(entry.key());
             ready_queue.push_back(token);
             session.set_token(token);
+            session.set_timestamp(Instant::now());
             session.register(&poll).expect("register failed");
             entry.insert(session);
         }
@@ -542,6 +543,7 @@ impl Worker {
                 debug!("delete {}", key);
             }
         }
+        session.set_timestamp(Instant::now());
         let _ = session.flush();
         let _ = session.reregister(&self.poll);
     }
@@ -600,11 +602,11 @@ impl Worker {
                             Ok(hit) => {
                                 RESPONSE.increment();
                                 if let Some(ref _heatmap) = self.request_heatmap {
-                                    let milli = (session.timestamp().elapsed().as_millis()) as u64;
+                                    let us = (session.timestamp().elapsed().as_micros()) as u64;
                                     // print latency
                                     match hit {
-                                        1 => println!("h {}", milli),
-                                        2 => println!("m {}", milli),
+                                        1 => println!("h {}", us),
+                                        2 => println!("m {}", us),
                                         _ => (),
                                     };
                                 }
