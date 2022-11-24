@@ -2,3 +2,5 @@ target
 vendor
 .cargo
 **/*.rs.bk
+out
+scripts
