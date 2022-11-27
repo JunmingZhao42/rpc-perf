@@ -478,6 +478,7 @@ impl Worker {
             let token = Token(entry.key());
             ready_queue.push_back(token);
             session.set_token(token);
+            session.set_timestamp(Instant::now());
             session.register(&poll).expect("register failed");
             entry.insert(session);
         }
@@ -542,6 +543,7 @@ impl Worker {
                 debug!("delete {}", key);
             }
         }
+        session.set_timestamp(Instant::now());
         let _ = session.flush();
         let _ = session.reregister(&self.poll);
     }
