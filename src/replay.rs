@@ -37,6 +37,8 @@ use std::sync::Arc;
 
 // TODO(bmartin): this should be split up into a library and binary
 fn main() {
+    let start = std::time::Instant::now();
+
     // initialize logging
     let log = LogBuilder::new()
         .output(Box::new(Stdout::new()))
@@ -224,7 +226,9 @@ fn main() {
     };
 
     let mut generator = Generator::new(trace, work, binary, controller);
-    generator.run()
+    generator.run();
+
+    println!("\n\n\n==========\nTotal Replay Time is: {} nanoseconds", start.elapsed().as_nanos());
 }
 
 pub trait Controller {

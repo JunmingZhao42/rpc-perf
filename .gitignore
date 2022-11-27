@@ -4,3 +4,4 @@ vendor
 **/*.rs.bk
 out
 scripts
+stats
