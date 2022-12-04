@@ -5,3 +5,4 @@ vendor
 out
 scripts
 stats
+*.log
