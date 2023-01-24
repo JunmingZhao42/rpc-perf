@@ -6,3 +6,6 @@ out
 scripts
 stats
 *.log
+
+# bindgen auto-generated file
+bindings.rs

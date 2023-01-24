@@ -35,6 +35,8 @@ use rustcommon_heatmap::AtomicHeatmap;
 use rustcommon_heatmap::AtomicU64;
 use std::sync::Arc;
 
+// include!("bindings.rs");
+
 // TODO(bmartin): this should be split up into a library and binary
 fn main() {
     let start = std::time::Instant::now();

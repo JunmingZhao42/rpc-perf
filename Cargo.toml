@@ -48,3 +48,6 @@ toml = "0.5.9"
 zipf = "7.0.0"
 zookeeper = "0.6.1"
 zstd = "0.11.2"
+
+[build-dependencies]
+bindgen = "0.63.0"
